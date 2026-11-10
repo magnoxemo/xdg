@@ -29,23 +29,23 @@ static constexpr int VERTS_PER_TET = 4;
 static constexpr int VERTS_PER_TRI = 3;
 static constexpr int FACES_PER_TET = 4;
 
+// Local vertex indices (0..3) of each of a tet's 4 faces, in Omega_h's
+// canonical order: local face f of a region uses vertices
+// elem_verts_[region * VERTS_PER_TET + kLocalFaceVerts[f][i]].
+// Each face is wound so its normal points out of the tet. Shared faces are
+// stored once with a region-independent vertex order, so this table gives the
+// per-region outward winding to compare against when orienting a face.
 static constexpr int kLocalFaceVerts[FACES_PER_TET][VERTS_PER_TRI] = {
     {0, 2, 1}, {0, 1, 3}, {1, 2, 3}, {2, 0, 3}};
 
 // Constructor
 
-namespace {
-// Omega_h::Library wraps process-wide MPI/Kokkos init and finalize calls and
-// must only be constructed once per process -- Kokkos aborts (and corrupts
-// its allocator state) if initialized more than once.
-Omega_h::Library &shared_omega_h_library() {
-  static Omega_h::Library lib(nullptr, nullptr);
-  return lib;
-}
-} // namespace
-
 OmegaHMeshManager::OmegaHMeshManager() {
-  mesh_ = std::make_unique<Omega_h::Mesh>(&shared_omega_h_library());
+  // Omega_h::Library wraps process-wide MPI/Kokkos init and finalize calls and
+  // must only be constructed once per process -- Kokkos aborts (and corrupts
+  // its allocator state) if initialized more than once.
+  static Omega_h::Library lib(nullptr, nullptr);
+  mesh_ = std::make_unique<Omega_h::Mesh>(&lib);
 }
 
 void OmegaHMeshManager::load_file(const std::string &file_path) {

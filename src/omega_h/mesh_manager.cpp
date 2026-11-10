@@ -326,8 +326,8 @@ MeshID OmegaHMeshManager::get_boundary_face_element(MeshID face) const {
 
 Vertex OmegaHMeshManager::vertex_coordinates(MeshID vertex) const {
   // coords_ is a flat array laid out as [x0, y0, z0, x1, y1, z1, ...]
-  Omega_h::LO base = static_cast<Omega_h::LO>(vertex) * 3;
-  return {coords_.get(base), coords_.get(base + 1), coords_.get(base + 2)};
+  Omega_h::LO coord_offset = static_cast<Omega_h::LO>(vertex) * 3;
+  return {coords_.get(coord_offset), coords_.get(coord_offset + 1), coords_.get(coord_offset + 2)};
 }
 
 std::vector<Vertex> OmegaHMeshManager::element_vertices(MeshID element) const {

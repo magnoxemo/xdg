@@ -28,7 +28,9 @@ public:
   void init() override;
 
   // TODO: I will have to implement this one.
-  void parse_metadata() override {};
+  void parse_metadata() override {
+    fatal_error("Metadata parsing capability is not implemented yet");
+  };
 
   int num_volumes() const override { return volumes_.size(); }
   int num_surfaces() const override { return surfaces_.size(); }
